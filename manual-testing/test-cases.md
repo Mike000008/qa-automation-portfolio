@@ -92,39 +92,61 @@
 
 ## API — Reqres
 
-### Authentication / Registration
-**TC-API-001 — Login success**
-- Endpoint: `POST /api/login`
-- Test Data: valid email + password
-- Expected:
-  - Status code: 200
-  - Response contains `token`
+** TC-API-USER-001 — Get existing user by valid ID (strict body match)
 
-**TC-API-002 — Login fails (missing password)**
-- Endpoint: `POST /api/login`
-- Test Data: email only
-- Expected:
-  - Status code: 400
-  - Response contains `error`
+- **Method:** GET  
+- **Endpoint:** `/api/users/1`
 
-**TC-API-003 — Register success**
-- Endpoint: `POST /api/register`
-- Test Data: valid email + password
-- Expected:
-  - Status code: 200
-  - Response contains `id` and `token`
+**Steps:**
+1. Send request
 
-**TC-API-004 — Register fails (missing password)**
-- Endpoint: `POST /api/register`
-- Test Data: email only
-- Expected:
-  - Status code: 400
-  - Response contains `error`
+**Expected:**
+- Status code: **200**
+- Response is **JSON**
+- Response contains `data` object
+- `data` strictly equals:
+  - `id` = 1
+  - `email` = `george.bluth@reqres.in`
+  - `first_name` = `George`
+  - `last_name` = `Bluth`
+  - `avatar` = `https://reqres.in/img/faces/1-image.jpg`
+- Response contains `support` object:
+  - `support.url` exists
+  - `support.text` exists
+- Response contains `_meta` object:
+  - `_meta.powered_by` exists
+  - `_meta.docs_url` exists
+  - `_meta.context` exists
 
-### Users
-**TC-API-005 — Get users list**
-- Endpoint: `GET /api/users?page=2`
-- Expected:
-  - Status code: 200
-  - Response contains `data` array with users
-  - Each user has `id`, `email`, `first_name`, `last_name`
+---
+
+** TC-API-USER-002 — Get non-existing user returns 404 with empty JSON object
+
+- **Method:** GET  
+- **Endpoint:** `/api/users/99`
+
+**Steps:**
+1. Send request
+
+**Expected:**
+- Status code: **404**
+- Response is **JSON**
+- Response body is **empty object `{}`** (strict match)
+
+---
+
+** TC-API-USER-003 — Get user with invalid ID format returns error JSON
+
+- **Method:** GET  
+- **Endpoint:** `/api/users/aaaa` *(invalid ID format)*
+
+**Steps:**
+1. Send request
+
+**Expected:**
+- Status code: **404**
+- Response is **JSON**
+- Response body is **NOT** empty object (contains at least one key)
+- Response contains `error` field
+- `error` is a **string**
+
